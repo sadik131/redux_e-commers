@@ -13,6 +13,9 @@ const counterSlice = createSlice({
       state.value -= 1;
     },
   },
+  extraReducers:(bulder)=>{
+    bulder
+  }
 });
 
 export const { increment, decrement } = counterSlice.actions;

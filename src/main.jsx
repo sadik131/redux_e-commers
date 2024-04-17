@@ -8,16 +8,17 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Login from './Page/Login.jsx'
-import SignIn from './Page/SignIn.jsx'
 import ProductDetails from './redux/products/components/ProductDetails.jsx'
 import Cart from './redux/cart/Cart.jsx'
 import CheckOut from './Page/CheckOut.jsx'
+import Login from './redux/auth/components/Login.jsx'
+import SignIn from './redux/auth/components/SignIn.jsx'
+import Protected from './Page/Protected.jsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (<App></App>),
+    element: (<Protected><App></App></Protected>),
   },
   {
     path: "/login",
@@ -29,24 +30,24 @@ const router = createBrowserRouter([
   },
   {
     path: "/productDetail/:id",
-    element: (<ProductDetails></ProductDetails>),
+    element: (<Protected><ProductDetails></ProductDetails></Protected>),
   },
   {
     path: "/cart",
-    element: (<Cart></Cart>),
+    element: (<Protected><Cart></Cart></Protected>),
   },
   {
     path: "/checkout",
-    element: (<CheckOut></CheckOut>),
+    element: (<Protected><CheckOut></CheckOut></Protected>),
   },
-  
-  
+
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>,
 )

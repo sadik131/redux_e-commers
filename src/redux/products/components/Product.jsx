@@ -25,7 +25,6 @@ const sortOptions = [
 function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filter, setFilter] = useState({})
-  console.log(filter)
   const [page, setPage] = useState(1)
   const catagory = useSelector(selectCatagory)
   const products = useSelector(selectProduct)
@@ -33,7 +32,6 @@ function Product() {
   const currentPage = useSelector(selectCurrentPage)
   const productsPerPage = useSelector(selectProductParPage);
 
-  console.log(currentPage,"parPage:",productsPerPage)
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -58,7 +56,6 @@ function Product() {
       options: brands
     },
   ]
-  console.log(NavFilter)
 
 
 
@@ -71,7 +68,6 @@ function Product() {
 
   // handel sort option
   const handelSort = (sort) => {
-    console.log(sort)
     const newFilter = { ...filter, _sort: sort.sort }
     setFilter(newFilter)
     dispatch(FetchProductsByFilter(newFilter))
@@ -110,7 +106,6 @@ export default Product
 
 
 function MobileFilter({ mobileFiltersOpen, filters, setMobileFiltersOpen, handelChecked }) {
-  console.log(filters)
 
   return (
     <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -407,6 +402,7 @@ function Pagination({ handelPageChange, page, setPage, totalItem = 97 }) {
 
             {Array.from({ length: productParPage }, (_, index) => (
               <div
+              key={index}
                 onClick={() => handelPageChange(index + 1)}
                 className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >

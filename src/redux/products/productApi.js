@@ -41,7 +41,6 @@ export function fetchApiByFilter(filter, pagination) {
     }
     return new Promise(async (resolve) => {
         const responce = await fetch("http://localhost:3000/products?" + quarry)
-        console.log(responce)
         const data = await responce.json()
         resolve({ data })
     })

@@ -38,7 +38,6 @@ export const fetchBrands = createAsyncThunk(
 export const FetchProductsByFilter = createAsyncThunk(
   'product/FetchProductsByFilter',
   async (filter, pagination) => {
-    // console.log(filter)
     const responce = await fetchApiByFilter(filter, pagination)
     return responce.data
 
@@ -48,7 +47,7 @@ export const FetchProductsByFilter = createAsyncThunk(
 // :id
 export const FetchProductByIdSlice = createAsyncThunk(
   "productDetails/fetchProductsById",
-  async(id)=>{
+  async (id) => {
     const responce = await fetchProductsById(id)
     return responce.data
   }
@@ -62,7 +61,7 @@ const productSlice = createSlice({
     brands: [],
     currentPage: 1,
     productParPage: 10,
-    selected:null
+    selected: null
   },
   reducers: {
 
@@ -111,7 +110,6 @@ const productSlice = createSlice({
   },
 });
 
-export const { increment, decrement } = productSlice.actions;
 export const selectProduct = (state) => state.product.products
 export const selectCatagory = (state) => state.product.catagory
 export const selectBrands = (state) => state.product.brands

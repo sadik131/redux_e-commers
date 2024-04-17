@@ -7,6 +7,8 @@ import { RadioGroup } from '@headlessui/react'
 import Navbar from '../../../components/navbar/Navbar'
 
 import { useSelector, useDispatch } from 'react-redux';
+import { addCartItemAsync } from '../../cart/cartSlice';
+import { selectLoggedIn } from '../../auth/authSlice';
 
 const colors = [
     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -23,45 +25,13 @@ const sizes = [
     { name: '2XL', inStock: true },
     { name: '3XL', inStock: true },
 ]
-const highlights= [
+const highlights = [
     'Hand cut and sewn locally',
     'Dyed with our proprietary colors',
     'Pre-washed & pre-shrunk',
     'Ultra-soft 100% cotton',
 ]
-const productold = {
-    name: 'Basic Tee 6-Pack',
-    price: '$192',
-    href: '#',
-    breadcrumbs: [
-        { id: 1, name: 'Men', href: '#' },
-        { id: 2, name: 'Clothing', href: '#' },
-    ],
-    images: [
-        {
-            src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg',
-            alt: 'Two each of gray, white, and black shirts laying flat.',
-        },
-        {
-            src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg',
-            alt: 'Model wearing plain black basic tee.',
-        },
-        {
-            src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg',
-            alt: 'Model wearing plain gray basic tee.',
-        },
-        {
-            src: 'https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg',
-            alt: 'Model wearing plain white basic tee.',
-        },
-    ],
 
-    description:
-        'The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: "Black". Need to add an extra pop of color to your outfit? Our white tee has you covered.',
-    
-    details:
-        'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-}
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
 function classNames(...classes) {
@@ -69,16 +39,23 @@ function classNames(...classes) {
 }
 
 function ProductDetails() {
+    const [selectedColor, setSelectedColor] = useState(colors[0])
+    const [selectedSize, setSelectedSize] = useState(sizes[2])
     const { id } = useParams()
     const dispatch = useDispatch()
     const product = useSelector(selectSelected)
+    const user = useSelector(selectLoggedIn)
+
     useEffect(() => {
         dispatch(FetchProductByIdSlice(id))
-
     }, [id]);
 
-    const [selectedColor, setSelectedColor] = useState(colors[0])
-    const [selectedSize, setSelectedSize] = useState(sizes[2])
+    // add to cart
+    const handelForm = (e) => {
+        e.preventDefault()
+        dispatch(addCartItemAsync({ ...product, userid: user.id }))
+    }
+
     return (
         <Navbar>
             <div className="bg-white">
@@ -278,9 +255,8 @@ function ProductDetails() {
                                         </div>
                                     </RadioGroup>
                                 </div>
-
                                 <button
-                                    type="submit"
+                                    onClick={(e) => handelForm(e)}
                                     className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                 >
                                     Add to bag
