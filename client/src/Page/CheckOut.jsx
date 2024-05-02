@@ -1,13 +1,46 @@
-import React, { useState } from 'react'
-import Cart from '../redux/cart/Cart'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux';
-import { selectLoggedIn, userAddressAsync } from '../redux/auth/authSlice';
+import { selectUser, updateUserAsync } from '../redux/user/userSlice';
+import Address from '../components/address';
+import { selectedCart, updateCartAsync } from '../redux/cart/cartSlice';
+import { Link, Navigate } from 'react-router-dom';
+import { createOrderAsync, selectCurrentOrder } from '../redux/order/orderSlice';
 
 function CheckOut() {
     const [paymentMethod, setPaymentMethod] = useState('cash');
+    const [quantities, setQuantities] = useState({});
     const dispatch = useDispatch()
-    const user = useSelector(selectLoggedIn)
+    const user = useSelector(selectUser)
+    const { order } = useSelector(selectCurrentOrder) || {};
+    const { result } = useSelector(selectedCart)
+    const [selectAddress, setSelectAddress] = useState(null)
+
+    // calculate price
+    useEffect(() => {
+        const initialQuantities = result.reduce((quantities, product) => {
+            quantities[product._id] = product.quantity;
+            return quantities;
+        }, {});
+        setQuantities(initialQuantities);
+    }, [result]);
+
+    const handleQuantityChange = (e, productId) => {
+        const newQuantity = parseInt(e.target.value);
+        setQuantities((prevQuantities) => ({
+            ...prevQuantities,
+            [productId]: newQuantity,
+        }))
+        dispatch(updateCartAsync({ quantity: newQuantity, productId }));
+    }
+
+    // calculate price
+    const totalPrice = result?.reduce((total, product) => {
+        const quantity = quantities[product._id] || 1;
+        return total + (parseFloat(product.items.price) * quantity);
+    }, 0).toFixed(0);
+
+
     const {
         register,
         handleSubmit,
@@ -18,12 +51,35 @@ function CheckOut() {
         setPaymentMethod(e.target.value);
     };
 
+    const handelFromSubmit = (data) => {
+        const info = {
+            userId: user._id,
+            data
+        }
+        dispatch(updateUserAsync(info))
+    }
+    const confirmCheckOut = () => {
+        if (selectAddress && paymentMethod) {
+            const data = {
+                totalPrice,
+                userId: user._id,
+                product: result,
+                address: selectAddress,
+                status: "pending",
+                paymentMethod
+            }
+            dispatch(createOrderAsync(data))
 
+        } else {
+            alert("all fild required")
+        }
+    }
     return (
         <>
+            {order && <Navigate to={`/order/${order._id}`}></Navigate>}
             <div>
                 <div className='flex'>
-                    <form onSubmit={handleSubmit(data => dispatch(userAddressAsync({ ...user, address: [...user.address, data] })))}>
+                    <form onSubmit={handleSubmit(data => handelFromSubmit(data))}>
                         <div className="px-14 mt-5">
                             <h2 className="text-base font-semibold leading-7 text-gray-900">Check out Information</h2>
                             <p className="mt-1 text-sm leading-6 text-gray-600">Use a permanent address where you can receive mail.</p>
@@ -66,9 +122,10 @@ function CheckOut() {
                                             {...register("country")}
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                                         >
-                                            <option>United States</option>
-                                            <option>Canada</option>
-                                            <option>Mexico</option>
+                                            <option>Dhaka</option>
+                                            <option>Gaibandha</option>
+                                            <option>Rongpur</option>
+                                            <option>Bogura</option>
                                         </select>
                                     </div>
                                 </div>
@@ -171,51 +228,94 @@ function CheckOut() {
                                     Save
                                 </button>
                             </div>
-                            <div className="border-b border-gray-900/10 pb-12">
-                                <div className="mt-10 space-y-10">
-                                    <fieldset>
-                                        <legend className="text-sm font-semibold leading-6 text-gray-900">Address</legend>
-                                        <p className='font-light text-[15px]'>Chose on existing address</p>
-                                        <div className="mt-2 space-y-6">
+                            {/* map */}
+                            <legend className="text-sm font-semibold  text-gray-900">Address</legend>
+                            <p className='font-light text-[15px]'>Chose on existing address</p>
+                            {user?.address?.map(add => <Address key={add._id} selectAddress={selectAddress} setSelectAddress={setSelectAddress} add={add}></Address>)}
 
-                                            <div className=' border-[2px] border-gray-300'>
-                                                <div className="relative flex items-center px-2 gap-x-3">
-                                                    <div className="flex h-6 items-center">
-                                                        <input
-                                                            id="candidates"
-                                                            name="candidates"
-                                                            type="checkbox"
-                                                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                        />
-                                                    </div>
-                                                    <div className='flex justify-between '>
-                                                        <div className="text-sm leading-6">
-                                                            <label className="font-medium text-gray-900">
-                                                                john
-                                                            </label>
-                                                            <p className="text-gray-500">address: Thanapara Gaibandha</p>
-                                                            <p className="text-gray-500">Email:salatusSadik@gmail.com</p>
-                                                        </div>
-                                                        <div className='ml-16'>
-                                                            <p className="text-gray-500">City :Gaibandha</p>
-                                                            <p className="text-gray-500">street:50/2</p>
-                                                            <p className="text-gray-500">zip: 5250</p>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                            </div>
                         </div>
                     </form>
 
-                    <Cart></Cart>
+                    <div className='mx-auto max-w-xl'>
+                        <div className="mt-8">
+                            <div className="flow-root">
+                                <ul role="list" className="-my-6 divide-y divide-gray-200">
+                                    {result.map((product) => {
+                                        const { items } = product;
+                                        return <li key={product._id} className="flex py-6">
+                                            <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                <img
+                                                    src={items?.thumbnail}
+                                                    alt={items?.title}
+                                                    className="h-full w-full object-cover object-center"
+                                                />
+                                            </div>
+
+                                            <div className="ml-4 flex flex-1 flex-col">
+                                                <div>
+                                                    <div className="flex justify-between text-base font-medium text-gray-900">
+                                                        <h3>
+                                                            <p>{items?.title}</p>
+                                                        </h3>
+                                                        <p className="ml-4">${items?.price}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-1 items-end justify-between text-sm">
+                                                    <p className="text-gray-500">Qty
+                                                        <select value={product.quantity} onChange={(e) => handleQuantityChange(e, product._id)}>
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                            <option value="4">4</option>
+                                                        </select></p>
+
+                                                    <div className="flex">
+                                                        <button
+                                                            onClick={() => dispatch(removeItemAsync(product._id))}
+                                                            type="button"
+                                                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    })}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                            <div className="flex justify-between text-base font-medium text-gray-900">
+                                <p>Subtotal</p>
+                                <p>${totalPrice}</p>
+                            </div>
+                            <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+                            <div className="mt-6">
+                                <button
+                                    onClick={confirmCheckOut}
+                                    className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                                >
+                                    Order
+                                </button>
+                            </div>
+                            <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+                                <Link to={"/"}>
+                                    or{' '}
+                                    <button
+                                        type="button"
+                                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                                    >
+                                        Continue Shopping
+                                        <span aria-hidden="true"> &rarr;</span>
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div >
-
         </>
     )
 }

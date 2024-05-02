@@ -23,11 +23,11 @@ export function checkUser(userInfo) {
         resolve({ data })
     })
 }
+
 //  user address
 export function userAddress(user) {
     return new Promise(async (resolve) => {
-        console.log(user)
-        const responce = await fetch(`http://localhost:3000/users?id=${user.id}`, {
+        const responce = await fetch(`http://localhost:3000/users/${user._id}`, {
             method: "PATCH",
             headers: { "content-type": "application/json" },
             body: JSON.stringify(user)

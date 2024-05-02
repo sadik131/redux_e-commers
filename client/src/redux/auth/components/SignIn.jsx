@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import Navbar from '../../../components/navbar/Navbar'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,7 +15,9 @@ function SignIn() {
         formState: { errors },
     } = useForm()
 
-    // if(user) return <Navigate to="/" replace="true" />
+    if(user){
+        return <Navigate to="/login"></Navigate>
+    }
 
     return (
         <Navbar>

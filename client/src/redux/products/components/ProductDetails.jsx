@@ -1,13 +1,13 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
-import { StarIcon } from '@heroicons/react/20/solid'
-import { FetchProductByIdSlice, selectSelected } from "../productSlice"
+import { FetchProductbyIdAsync, selectSelected } from "../productSlice"
 import { RadioGroup } from '@headlessui/react'
 import Navbar from '../../../components/navbar/Navbar'
 import { useSelector, useDispatch } from 'react-redux';
 import { addCartItemAsync } from '../../cart/cartSlice';
 import { selectLoggedIn } from '../../auth/authSlice';
+import { selectUser } from '../../user/userSlice';
 
 const colors = [
     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -43,16 +43,16 @@ function ProductDetails() {
     const { id } = useParams()
     const dispatch = useDispatch()
     const product = useSelector(selectSelected)
-    const user = useSelector(selectLoggedIn)
+    const user = useSelector(selectUser)
 
     useEffect(() => {
-        dispatch(FetchProductByIdSlice(id))
+        dispatch(FetchProductbyIdAsync(id))
     }, [id]);
 
     // add to cart
     const handelForm = (e) => {
         e.preventDefault()
-        dispatch(addCartItemAsync({ items: product.product, user: user.user }))
+        dispatch(addCartItemAsync({ items: product.product._id, user: user._id }))
     }
 
     return (

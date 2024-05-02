@@ -15,6 +15,46 @@ export function fetchProductsById(id) {
         resolve({ data })
     })
 }
+
+// create a new product
+export function createProduct(data) {
+    return new Promise(async (resolve) => {
+        const responce = await fetch("http://localhost:3000/product", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        const result = await responce.json()
+        resolve({ result })
+        alert("success")
+        
+    })
+}
+
+// delete product
+export function deleteProductById(id) {
+    return new Promise(async (resolve) => {
+        const responce = await fetch(`http://localhost:3000/product/${id}`, {
+            method: "DELETE",
+        })
+        const result = await responce.json()
+        resolve({ result })
+    })
+}
+
+//update product by id
+export function updateProductById(data) {
+    return new Promise(async (resolve) => {
+        const responce = await fetch(`http://localhost:3000/product/${data.id}`, {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(data.formattedData)
+        })
+        const result = await responce.json()
+        resolve({ result })
+    })
+}
+
 //  fetch all catagory
 export function fetchCatagorysByApi() {
     return new Promise(async (resolve) => {

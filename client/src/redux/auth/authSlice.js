@@ -20,19 +20,19 @@ export const checkUserAsync = createAsyncThunk(
 )
 
 // check user
-export const userAddressAsync = createAsyncThunk(
-  "auth/userAddress",
-  async (data) => {
-    const responce = await userAddress(data)
-    return responce.data
-  }
-)
+// export const userAddressAsync = createAsyncThunk(
+//   "auth/userAddress",
+//   async (data) => {
+//     const responce = await userAddress(data)
+//     return responce.data
+//   }
+// )
 
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    loggedinUser: [],
+    loggedinUser: null,
     error: null
   },
   reducers: {
@@ -45,26 +45,26 @@ const authSlice = createSlice({
       })
       .addCase(createUserAsync.fulfilled, (state, action) => {
         state.status = "success",
-          state.loggedinUser = action.payload
+          state.loggedinUser = action.payload.user
       })
       .addCase(checkUserAsync.pending, (state) => {
         state.status = "pending"
       })
       .addCase(checkUserAsync.fulfilled, (state, action) => {
         state.status = "success",
-          state.loggedinUser = action.payload
+          state.loggedinUser = action.payload.user
       })
       .addCase(checkUserAsync.rejected, (state, action) => {
         state.status = "fail",
           state.error = action.payload
       })
-      .addCase(userAddressAsync.pending, (state) => {
-        state.status = "pending"
-      })
-      .addCase(userAddressAsync.fulfilled, (state, action) => {
-        state.status = "success",
-          state.loggedinUser = action.payload
-      })
+      // .addCase(userAddressAsync.pending, (state) => {
+      //   state.status = "pending"
+      // })
+      // .addCase(userAddressAsync.fulfilled, (state, action) => {
+      //   state.status = "success",
+      //     state.loggedinUser = action.payload
+      // })
   }
 });
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import Navbar from '../../../components/navbar/Navbar'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,15 +9,14 @@ function Login() {
 
     const dispatch = useDispatch()
     const user = useSelector(selectLoggedIn)
-
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm()
 
-    if (user.success) {
-       return <Navigate to="/"></Navigate>
+    if (user) {
+        return <Navigate to="/"></Navigate>
     }
 
     return (
