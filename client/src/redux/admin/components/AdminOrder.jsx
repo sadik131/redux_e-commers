@@ -18,6 +18,7 @@ function AdminOrder() {
     }
     const handleStatusChange = (e) => {
         dispatch(updateStatusAsync({ id: edit, status: e.target.value }))
+        setEdit(null)
     }
 
     

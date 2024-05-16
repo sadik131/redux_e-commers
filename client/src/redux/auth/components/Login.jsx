@@ -3,17 +3,23 @@ import { Link, Navigate } from 'react-router-dom'
 import Navbar from '../../../components/navbar/Navbar'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { checkUserAsync, selectError, selectLoggedIn } from '../authSlice'
+import { checkUserAsync, selectUserToken } from '../authSlice'
 
 function Login() {
 
     const dispatch = useDispatch()
-    const user = useSelector(selectLoggedIn)
+    const user = useSelector(selectUserToken)
+    console.log(user)
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm()
+
+    
+    const onSubmit = (data) => {
+        dispatch(checkUserAsync(data)); // Wait for the checkUserAsync to complete
+    };
 
     if (user) {
         return <Navigate to="/"></Navigate>
@@ -34,7 +40,7 @@ function Login() {
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="space-y-6" onSubmit={handleSubmit(data => dispatch(checkUserAsync(data)))}>
+                    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                                 Email address

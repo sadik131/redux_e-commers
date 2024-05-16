@@ -3,19 +3,19 @@ import { Link, Navigate } from 'react-router-dom'
 import Navbar from '../../../components/navbar/Navbar'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { createUserAsync, selectLoggedIn } from '../authSlice'
+import { createUserAsync, selectUserToken } from '../authSlice'
 
 function SignIn() {
-    const user = useSelector(selectLoggedIn)
+    const user = useSelector(selectUserToken)
     const dispatch = useDispatch()
-
+console.log(user)
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm()
 
-    if(user){
+    if (user) {
         return <Navigate to="/login"></Navigate>
     }
 

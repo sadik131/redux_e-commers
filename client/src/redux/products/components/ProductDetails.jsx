@@ -6,7 +6,6 @@ import { RadioGroup } from '@headlessui/react'
 import Navbar from '../../../components/navbar/Navbar'
 import { useSelector, useDispatch } from 'react-redux';
 import { addCartItemAsync } from '../../cart/cartSlice';
-import { selectLoggedIn } from '../../auth/authSlice';
 import { selectUser } from '../../user/userSlice';
 
 const colors = [

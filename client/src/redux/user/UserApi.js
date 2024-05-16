@@ -1,6 +1,6 @@
-export function fetchUser(id) {
+export function fetchUser() {
     return new Promise(async (resolve) => {
-        const responce = await fetch(`http://localhost:3000/user/${id}`)
+        const responce = await fetch(`http://localhost:3000/user/own`)
         const data = await responce.json()
         resolve({ data })
     })

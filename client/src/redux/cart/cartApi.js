@@ -1,7 +1,7 @@
 // fetch cat item
-export function GetcartItem(id) {
+export function GetcartItem() {
     return new Promise(async (resolve) => {
-        const responce = await fetch(`http://localhost:3000/cart/${id}`)
+        const responce = await fetch(`http://localhost:3000/cart/own`)
         const data = await responce.json()
         resolve({ data })
     })

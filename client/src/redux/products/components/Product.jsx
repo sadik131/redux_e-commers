@@ -6,7 +6,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
-import { FetchAllProducts, fetchBrands, fetchCatagory, fetchProductsByFilter, selectBrands, selectCatagory, selectCurrentPage, selectProduct, selectProductParPage, setFilters } from '../productSlice'
+import { FetchAllProducts, FetchProductsByFilter, fetchBrands, fetchCatagory, selectBrands, selectCatagory, selectCurrentPage, selectProduct, selectProductParPage, setFilters } from '../productSlice'
 import { LIMIT_PAR_PAGE } from '../../../Const'
 
 function classNames(...classes) {
@@ -64,8 +64,8 @@ function Product() {
   const handelChecked = (id, value) => {
     const newFilter = { ...filter, [id]: value };
     setFilter(newFilter);
-    dispatch(setFilters(newFilter)); // Update Redux store with new filters
-    dispatch(fetchProductsByFilter(newFilter));
+    // dispatch(setFilters(newFilter)); // Update Redux store with new filters
+    dispatch(FetchProductsByFilter(filter));
   }
 
   // handel sort option
@@ -107,8 +107,7 @@ function Product() {
 export default Product
 
 
-function MobileFilter({ mobileFiltersOpen, filters, setMobileFiltersOpen, handelChecked }) {
-
+function MobileFilter({ mobileFiltersOpen, filters, setMobileFiltersOpen, handleChecked }) {
   return (
     <Transition.Root show={mobileFiltersOpen} as={Fragment}>
       <Dialog as="div" className="relative z-40 lg:hidden" onClose={setMobileFiltersOpen}>
@@ -177,7 +176,7 @@ function MobileFilter({ mobileFiltersOpen, filters, setMobileFiltersOpen, handel
                                   defaultValue={option.value}
                                   type="checkbox"
                                   defaultChecked={option.checked}
-                                  onChange={() => handelChecked(section.id, option.value)}
+                                  onChange={() => handleChecked(section.id, option.value)} // Corrected function name
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <label
@@ -202,6 +201,7 @@ function MobileFilter({ mobileFiltersOpen, filters, setMobileFiltersOpen, handel
     </Transition.Root>
   )
 }
+
 
 function ProductGrid({ products, setMobileFiltersOpen, handelChecked, filters, handelSort }) {
   return (

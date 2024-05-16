@@ -19,20 +19,11 @@ export const checkUserAsync = createAsyncThunk(
   }
 )
 
-// check user
-// export const userAddressAsync = createAsyncThunk(
-//   "auth/userAddress",
-//   async (data) => {
-//     const responce = await userAddress(data)
-//     return responce.data
-//   }
-// )
-
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    loggedinUser: null,
+    loggedinUserToken: null,
     error: null
   },
   reducers: {
@@ -45,29 +36,23 @@ const authSlice = createSlice({
       })
       .addCase(createUserAsync.fulfilled, (state, action) => {
         state.status = "success",
-          state.loggedinUser = action.payload.user
+          state.loggedinUserToken = action.payload
       })
       .addCase(checkUserAsync.pending, (state) => {
         state.status = "pending"
       })
       .addCase(checkUserAsync.fulfilled, (state, action) => {
-        state.status = "success",
-          state.loggedinUser = action.payload.user
+        console.log(action.payload)
+        state.status = "success"
+        state.loggedinUserToken = action.payload.user
       })
       .addCase(checkUserAsync.rejected, (state, action) => {
         state.status = "fail",
           state.error = action.payload
       })
-      // .addCase(userAddressAsync.pending, (state) => {
-      //   state.status = "pending"
-      // })
-      // .addCase(userAddressAsync.fulfilled, (state, action) => {
-      //   state.status = "success",
-      //     state.loggedinUser = action.payload
-      // })
   }
 });
 
-export const selectLoggedIn = (state) => state.auth.loggedinUser
+export const selectUserToken = (state) => state.auth.loggedinUserToken
 export const selectError = (state) => state.auth.error
 export default authSlice.reducer;

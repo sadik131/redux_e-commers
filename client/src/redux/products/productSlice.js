@@ -50,14 +50,14 @@ export const FetchProductsByFilter = createAsyncThunk(
 )
 
 // :id
-export const fetchProductsByFilter = createAsyncThunk(
-  'product/fetchProductsByFilter',
-  async (filter, { getState }) => {
-      const state = getState().product;
-      const response = await fetchApiByFilter(filter, state.pagination);
-      return response.data;
-  }
-)
+// export const fetchProductsByFilter = createAsyncThunk(
+//   'product/fetchProductsByFilter',
+//   async (filter, { getState }) => {
+//       const state = getState().product;
+//       const response = await fetchApiByFilter(filter, state.pagination);
+//       return response.data;
+//   }
+// )
 
 const productSlice = createSlice({
   name: 'product',
@@ -73,7 +73,7 @@ const productSlice = createSlice({
   reducers: {
     setFilters: (state, action) => {
       state.filters = action.payload;
-  },
+    },
   },
   extraReducers: (builder) => {
     builder

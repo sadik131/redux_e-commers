@@ -66,11 +66,13 @@ const orderSlice = createSlice({
       .addCase(updateStatusAsync.pending, (state) => {
         state.status = "Loading"
       })
+      // order._id === action.payload.result._id
       .addCase(updateStatusAsync.fulfilled, (state, action) => {
-        state.status = "success"
-        const index = state.order.findIndex(order => order._id === action.payload._id);
+        state.status = "success";
+        const updatedOrder = action.payload.result;
+        const index = state.order.findIndex(order => order._id === updatedOrder._id);
         if (index !== -1) {
-          state.order[index].status = action.payload.status;
+          state.order[index] = updatedOrder;
         }
       })
   }

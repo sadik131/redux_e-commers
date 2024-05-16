@@ -3,8 +3,8 @@ import { deleteUserAddress, fetchUser, orderbyUserId, updateUser, updateUseraddr
 
 export const fetchUserAsync = createAsyncThunk(
   "user/fetchUser",
-  async (id) => {
-    const responce = await fetchUser(id)
+  async () => {
+    const responce = await fetchUser()
     return responce.data
   }
 )
